@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tinyserve - Local Host Manager for Mac</title>
+  <meta name="description" content="A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --border: #2a2a2a;
+      --text: #e5e5e5;
+      --text-muted: #888;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --green: #22c55e;
+      --code-bg: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 32px;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero .tagline {
+      font-size: 1.35rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+
+    .install-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1.1rem;
+    }
+
+    .install-box code {
+      color: var(--green);
+    }
+
+    .install-box .dollar {
+      color: var(--text-muted);
+    }
+
+    .copy-btn {
+      background: var(--border);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.8rem;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 48px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .feature h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Getting Started */
+    .getting-started {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .getting-started h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .getting-started > .container > p {
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      font-size: 1.1rem;
+    }
+
+    .step {
+      margin-bottom: 48px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .step-number {
+      background: var(--accent);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step h3 {
+      font-size: 1.25rem;
+    }
+
+    .step p {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      margin-left: 48px;
+    }
+
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-left: 48px;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      display: block;
+    }
+
+    .code-block .comment {
+      color: var(--text-muted);
+    }
+
+    .code-block .command {
+      color: var(--green);
+    }
+
+    .code-block .flag {
+      color: var(--accent);
+    }
+
+    .code-block .string {
+      color: #f59e0b;
+    }
+
+    /* Commands */
+    .commands {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .commands h2 {
+      font-size: 2rem;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .command-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .command-item {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .command-item code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--green);
+      font-size: 0.9rem;
+    }
+
+    .command-item span {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .command-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero .tagline {
+        font-size: 1.1rem;
+      }
+
+      .install-box {
+        flex-direction: column;
+        padding: 16px 24px;
+        font-size: 0.95rem;
+      }
+
+      .code-block {
+        margin-left: 0;
+      }
+
+      .step p {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">tinyserve</a>
+      <nav class="nav-links">
+        <a href="https://github.com/tinyserve/tinyserve">GitHub</a>
+        <a href="https://github.com/tinyserve/tinyserve/tree/main/docs">Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>tinyserve</h1>
+      <p class="tagline">A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.</p>
+      <div class="install-box">
+        <code><span class="dollar">$</span> brew install tinyserve/tap/tinyserve</code>
+        <button class="copy-btn" onclick="copyInstall()">Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2>Why tinyserve?</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon">&#9889;</div>
+          <h3>Zero Port Forwarding</h3>
+          <p>Uses Cloudflare Tunnel for secure remote access. No need to open ports on your router.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128640;</div>
+          <h3>Staging-First Deploys</h3>
+          <p>Non-destructive deployments with automatic health checks and rollback on failure.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128230;</div>
+          <h3>Docker Native</h3>
+          <p>Manages Docker Compose services with Traefik as a reverse proxy. Simple and familiar.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#127823;</div>
+          <h3>macOS-First</h3>
+          <p>Built specifically for Mac mini as a home server. Integrates with launchd for startup.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128736;</div>
+          <h3>REST API + CLI</h3>
+          <p>Full REST API with embedded web dashboard. CLI for quick terminal access.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128274;</div>
+          <h3>Self-Contained</h3>
+          <p>All state stored locally in ~/Library/Application Support/tinyserve. You own your data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="getting-started">
+    <div class="container">
+      <h2>So you bought a new Mac?</h2>
+      <p>Get your home server running in minutes.</p>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">1</span>
+          <h3>Install dependencies</h3>
+        </div>
+        <p>Install Homebrew, Xcode Command Line Tools, and a Docker runtime.</p>
+        <div class="code-block">
+<code><span class="comment"># Install Xcode Command Line Tools</span>
+<span class="command">xcode-select --install</span>
+
+<span class="comment"># Install Homebrew (if not already installed)</span>
+<span class="command">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
+
+<span class="comment"># Install Colima (lightweight Docker runtime for macOS)</span>
+<span class="command">brew install colima docker docker-compose</span>
+<span class="command">colima start</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">2</span>
+          <h3>Install tinyserve</h3>
+        </div>
+        <p>Install tinyserve via Homebrew tap.</p>
+        <div class="code-block">
+<code><span class="command">brew install tinyserve/tap/tinyserve</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">3</span>
+          <h3>Initialize with your domain</h3>
+        </div>
+        <p>Run the init command with your domain and Cloudflare API token. This creates your tunnel automatically.</p>
+        <div class="code-block">
+<code><span class="comment"># Start the daemon</span>
+<span class="command">tinyserved &amp;</span>
+
+<span class="comment"># Initialize with your domain</span>
+<span class="command">tinyserve init</span> <span class="flag">--domain</span> <span class="string">yourdomain.com</span> <span class="flag">\</span>
+  <span class="flag">--cloudflare-api-token</span> <span class="string">$CF_API_TOKEN</span> <span class="flag">\</span>
+  <span class="flag">--tunnel-name</span> <span class="string">home-server</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">4</span>
+          <h3>Add your first service</h3>
+        </div>
+        <p>Add a service and deploy it. tinyserve handles the routing, SSL, and tunnel configuration.</p>
+        <div class="code-block">
+<code><span class="comment"># Add a simple whoami service</span>
+<span class="command">tinyserve service add</span> <span class="flag">--name</span> <span class="string">whoami</span> <span class="flag">\</span>
+  <span class="flag">--image</span> <span class="string">traefik/whoami:v1.10</span> <span class="flag">\</span>
+  <span class="flag">--hostname</span> <span class="string">whoami.yourdomain.com</span> <span class="flag">\</span>
+  <span class="flag">--port</span> <span class="string">80</span>
+
+<span class="comment"># Deploy all services</span>
+<span class="command">tinyserve deploy</span>
+
+<span class="comment"># Check status</span>
+<span class="command">tinyserve status</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">5</span>
+          <h3>Set up auto-start (optional)</h3>
+        </div>
+        <p>Configure the daemon to start automatically when your Mac boots.</p>
+        <div class="code-block">
+<code><span class="comment"># Enable tinyserved as a launch agent</span>
+<span class="command">brew services start tinyserve</span></code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="commands">
+    <div class="container">
+      <h2>Quick Reference</h2>
+      <div class="command-list">
+        <div class="command-item">
+          <code>tinyserve status</code>
+          <span>Show daemon health, proxy status, and service count</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve service list</code>
+          <span>List all services with their status and metadata</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve service add --name NAME --image IMG --hostname HOST --port PORT</code>
+          <span>Add a new service with Docker image and hostname</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve deploy</code>
+          <span>Deploy all services with health checks and auto-rollback</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve logs --service NAME</code>
+          <span>View logs for a specific service</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve rollback</code>
+          <span>Restore last known-good configuration</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>
+        <a href="https://github.com/tinyserve/tinyserve">GitHub</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://github.com/tinyserve/tinyserve/tree/main/docs">Documentation</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://github.com/tinyserve/tinyserve/issues">Issues</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function copyInstall() {
+      navigator.clipboard.writeText('brew install tinyserve/tap/tinyserve');
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    }
+  </script>
+</body>
+</html>
