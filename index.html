@@ -7,15 +7,15 @@
   <meta name="description" content="A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.">
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --border: #2a2a2a;
-      --text: #e5e5e5;
-      --text-muted: #888;
-      --accent: #3b82f6;
-      --accent-hover: #60a5fa;
-      --green: #22c55e;
-      --code-bg: #1a1a1a;
+      --bg: #000000;
+      --surface: #111111;
+      --border: #333333;
+      --text: #ffffff;
+      --text-muted: #a0a0a0;
+      --accent: #4d94ff;
+      --accent-hover: #70acff;
+      --green: #2dd66b;
+      --code-bg: #0a0a0a;
     }
 
     * {
@@ -130,46 +130,6 @@
     .copy-btn:hover {
       background: var(--accent);
       color: white;
-    }
-
-    /* Features */
-    .features {
-      padding: 80px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .features h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 48px;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-    }
-
-    .feature {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-    }
-
-    .feature-icon {
-      font-size: 1.5rem;
-      margin-bottom: 16px;
-    }
-
-    .feature h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-
-    .feature p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
     }
 
     /* Getting Started */
@@ -369,44 +329,6 @@
       <div class="install-box">
         <code><span class="dollar">$</span> brew tap tinyserve/tinyserve && brew install tinyserve</code>
         <button class="copy-btn" onclick="copyInstall()">Copy</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="features">
-    <div class="container">
-      <h2>Why tinyserve?</h2>
-      <div class="feature-grid">
-        <div class="feature">
-          <div class="feature-icon">&#9889;</div>
-          <h3>Zero Port Forwarding</h3>
-          <p>Uses Cloudflare Tunnel for secure remote access. No need to open ports on your router.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">&#128640;</div>
-          <h3>Staging-First Deploys</h3>
-          <p>Non-destructive deployments with automatic health checks and rollback on failure.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">&#128230;</div>
-          <h3>Docker Native</h3>
-          <p>Manages Docker Compose services with Traefik as a reverse proxy. Simple and familiar.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">&#127823;</div>
-          <h3>macOS-First</h3>
-          <p>Built specifically for Mac mini as a home server. Integrates with launchd for startup.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">&#128736;</div>
-          <h3>REST API + CLI</h3>
-          <p>Full REST API with embedded web dashboard. CLI for quick terminal access.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">&#128274;</div>
-          <h3>Self-Contained</h3>
-          <p>All state stored locally in ~/Library/Application Support/tinyserve. You own your data.</p>
-        </div>
       </div>
     </div>
   </section>
