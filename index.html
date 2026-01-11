@@ -54,6 +54,22 @@
       font-weight: 600;
       color: var(--text);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 28px;
+      width: auto;
+    }
+
+    .hero-logo {
+      width: 220px;
+      height: auto;
+      margin-bottom: 32px;
+      filter: invert(1);
+      mix-blend-mode: screen;
     }
 
     .nav-links a {
@@ -323,7 +339,8 @@
 
   <section class="hero">
     <div class="container">
-      <h1>tinyserve</h1>
+      <img src="tinyserve_logo_full.png" alt="tinyserve" class="hero-logo">
+     
       <p class="tagline">A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.</p>
       <p class="subtitle">If you don't need infinite scale or 100% uptime, just predictable costs and full ownership.</p>
       <div class="install-box">
