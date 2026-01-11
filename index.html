@@ -85,6 +85,14 @@
       font-size: 1.35rem;
       color: var(--text-muted);
       max-width: 600px;
+      margin: 0 auto 16px;
+    }
+
+    .hero .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      opacity: 0.8;
+      max-width: 500px;
       margin: 0 auto 48px;
     }
 
@@ -230,6 +238,7 @@
       font-size: 0.9rem;
       line-height: 1.7;
       display: block;
+      white-space: pre-wrap;
     }
 
     .code-block .comment {
@@ -321,6 +330,10 @@
         font-size: 1.1rem;
       }
 
+      .hero .subtitle {
+        font-size: 1rem;
+      }
+
       .install-box {
         flex-direction: column;
         padding: 16px 24px;
@@ -352,8 +365,9 @@
     <div class="container">
       <h1>tinyserve</h1>
       <p class="tagline">A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.</p>
+      <p class="subtitle">You don't need infinite scale or 100% uptime—just predictable costs and full ownership.</p>
       <div class="install-box">
-        <code><span class="dollar">$</span> brew install tinyserve/tap/tinyserve</code>
+        <code><span class="dollar">$</span> brew tap tinyserve/tinyserve && brew install tinyserve</code>
         <button class="copy-btn" onclick="copyInstall()">Copy</button>
       </div>
     </div>
@@ -416,8 +430,8 @@
 <span class="command">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
 
 <span class="comment"># Install Colima (lightweight Docker runtime for macOS)</span>
-<span class="command">brew install colima docker docker-compose</span>
-<span class="command">colima start</span></code>
+<span class="command">brew install colima docker</span>
+<span class="command">colima start --arch aarch64 --vm-type vz --cpu 4 --memory 8</span></code>
         </div>
       </div>
 
@@ -428,7 +442,8 @@
         </div>
         <p>Install tinyserve via Homebrew tap.</p>
         <div class="code-block">
-<code><span class="command">brew install tinyserve/tap/tinyserve</span></code>
+<code><span class="command">brew tap tinyserve/tinyserve</span>
+<span class="command">brew install tinyserve</span></code>
         </div>
       </div>
 
@@ -440,12 +455,13 @@
         <p>Run the init command with your domain and Cloudflare API token. This creates your tunnel automatically.</p>
         <div class="code-block">
 <code><span class="comment"># Start the daemon</span>
-<span class="command">tinyserved &amp;</span>
+<span class="command">TINYSERVE_API=http://127.0.0.1:7070 tinyserved &amp;</span>
 
 <span class="comment"># Initialize with your domain</span>
-<span class="command">tinyserve init</span> <span class="flag">--domain</span> <span class="string">yourdomain.com</span> <span class="flag">\</span>
-  <span class="flag">--cloudflare-api-token</span> <span class="string">$CF_API_TOKEN</span> <span class="flag">\</span>
-  <span class="flag">--tunnel-name</span> <span class="string">home-server</span></code>
+<span class="command">tinyserve init \</span>
+<span class="flag">  --domain</span> <span class="string">yourdomain.com</span> <span class="flag">\</span>
+<span class="flag">  --cloudflare-api-token</span> <span class="string">$CF_API_TOKEN</span> <span class="flag">\</span>
+<span class="flag">  --tunnel-name</span> <span class="string">tinyserve-home</span></code>
         </div>
       </div>
 
@@ -477,8 +493,11 @@
         </div>
         <p>Configure the daemon to start automatically when your Mac boots.</p>
         <div class="code-block">
-<code><span class="comment"># Enable tinyserved as a launch agent</span>
-<span class="command">brew services start tinyserve</span></code>
+<code><span class="comment"># Install the launchd agent</span>
+<span class="command">tinyserve launchd install</span>
+
+<span class="comment"># Verify it's running</span>
+<span class="command">tinyserve launchd status</span></code>
         </div>
       </div>
     </div>
@@ -505,7 +524,7 @@
           <span>Deploy all services with health checks and auto-rollback</span>
         </div>
         <div class="command-item">
-          <code>tinyserve logs --service NAME</code>
+          <code>tinyserve logs --service NAME --tail 100</code>
           <span>View logs for a specific service</span>
         </div>
         <div class="command-item">
@@ -530,7 +549,7 @@
 
   <script>
     function copyInstall() {
-      navigator.clipboard.writeText('brew install tinyserve/tap/tinyserve');
+      navigator.clipboard.writeText('brew tap tinyserve/tinyserve && brew install tinyserve');
       const btn = document.querySelector('.copy-btn');
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
