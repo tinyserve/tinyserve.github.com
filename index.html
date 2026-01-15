@@ -16,6 +16,32 @@
       --accent-hover: #70acff;
       --green: #2dd66b;
       --code-bg: #0a0a0a;
+      --code-header: #0d0d0d;
+      --code-header-border: #1f1f1f;
+      --code-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      --string: #f59e0b;
+      --wordmark-base: #d6d9dc;
+      --wordmark-light-gradient: linear-gradient(180deg, #f4f5f6 0%, #b7babd 55%, #e4e6e8 100%);
+      --wordmark-strong-gradient: linear-gradient(180deg, #ffffff 0%, #c5c8cb 50%, #eef0f2 100%);
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f6f6;
+      --surface: #ffffff;
+      --border: #e3e3e3;
+      --text: #121212;
+      --text-muted: #50555a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --green: #15803d;
+      --code-bg: #f1f1f1;
+      --code-header: #f7f7f7;
+      --code-header-border: #e5e5e5;
+      --code-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+      --string: #b45309;
+      --wordmark-base: #1f2933;
+      --wordmark-light-gradient: linear-gradient(180deg, #0f172a 0%, #374151 55%, #0b1f2a 100%);
+      --wordmark-strong-gradient: linear-gradient(180deg, #111827 0%, #1f2937 55%, #0b1220 100%);
     }
 
     * {
@@ -65,23 +91,96 @@
     }
 
     .hero-logo {
-      width: 220px;
+      width: 120px;
       height: auto;
+    }
+
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
       margin-bottom: 32px;
-      filter: invert(1);
-      mix-blend-mode: screen;
+    }
+
+    .hero-wordmark {
+      font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: -0.015em;
+      color: var(--wordmark-base);
+    }
+
+    .hero-wordmark .wordmark-light {
+      font-weight: 300;
+      display: inline-block;
+      background: var(--wordmark-light-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-wordmark .wordmark-strong {
+      font-weight: 700;
+      display: inline-block;
+      background: var(--wordmark-strong-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
 
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
-      margin-left: 32px;
+      margin-left: 0;
       font-size: 0.9rem;
       transition: color 0.2s;
     }
 
     .nav-links a:hover {
       color: var(--text);
+    }
+
+    .theme-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+    }
+
+    .theme-toggle:active {
+      transform: translateY(1px);
+    }
+
+    .theme-toggle .theme-icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+    }
+
+    .theme-toggle[data-theme="light"] .theme-icon {
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
     }
 
     /* Hero */
@@ -113,19 +212,21 @@
     }
 
     .install-box {
-      background: var(--surface);
+      background: var(--code-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 32px;
-      display: inline-flex;
-      align-items: center;
-      gap: 16px;
+      border-radius: 14px;
+      display: inline-block;
+      text-align: left;
+      overflow: hidden;
+      box-shadow: var(--code-shadow);
       font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
       font-size: 1.1rem;
     }
 
     .install-box code {
       color: var(--green);
+      display: block;
+      padding: 18px 24px 22px;
     }
 
     .install-box .dollar {
@@ -148,10 +249,48 @@
       color: white;
     }
 
+    .install-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: var(--code-header);
+      border-bottom: 1px solid var(--code-header-border);
+    }
+
+    .install-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .install-header .copy-btn {
+      margin-left: auto;
+      font-size: 0.7rem;
+      padding: 6px 10px;
+    }
+
     /* Getting Started */
     .getting-started {
       padding: 80px 0;
       border-top: 1px solid var(--border);
+    }
+
+    .keller-block {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .keller-image {
+      width: min(620px, 96%);
+      height: auto;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
     }
 
     .getting-started h2 {
@@ -201,12 +340,14 @@
     }
 
     .code-block {
-      background: var(--code-bg);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.06)), var(--code-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px 24px;
+      border-radius: 14px;
+      padding: 0;
       margin-left: 48px;
-      overflow-x: auto;
+      overflow: hidden;
+      box-shadow: var(--code-shadow);
+      position: relative;
     }
 
     .code-block code {
@@ -215,6 +356,51 @@
       line-height: 1.7;
       display: block;
       white-space: pre-wrap;
+      padding: 18px 24px 22px;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: var(--code-header);
+      border-bottom: 1px solid var(--code-header-border);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .code-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+    }
+
+    .code-dot.red {
+      background: #ff5f56;
+    }
+
+    .code-dot.yellow {
+      background: #ffbd2e;
+    }
+
+    .code-dot.green {
+      background: #27c93f;
+    }
+
+    .code-title {
+      font-weight: 600;
     }
 
     .code-block .comment {
@@ -230,7 +416,7 @@
     }
 
     .code-block .string {
-      color: #f59e0b;
+      color: var(--string);
     }
 
     /* Commands */
@@ -311,8 +497,7 @@
       }
 
       .install-box {
-        flex-direction: column;
-        padding: 16px 24px;
+        width: 100%;
         font-size: 0.95rem;
       }
 
@@ -322,6 +507,15 @@
 
       .step p {
         margin-left: 0;
+      }
+
+      .hero-brand {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .hero-wordmark {
+        font-size: 2.2rem;
       }
     }
   </style>
@@ -333,25 +527,42 @@
       <nav class="nav-links">
         <a href="https://github.com/tinyserve/tinyserve">GitHub</a>
         <a href="https://github.com/tinyserve/tinyserve/tree/main/docs">Docs</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to white mode">
+          <span class="theme-icon" aria-hidden="true"></span>
+          <span class="theme-label" data-theme-label>White mode</span>
+        </button>
       </nav>
     </div>
   </header>
 
   <section class="hero">
     <div class="container">
-      <img src="tinyserve_logo_full.png" alt="tinyserve" class="hero-logo">
+      <div class="hero-brand">
+        <img src="tinyserve_logo_full.png" alt="tinyserve" class="hero-logo">
+        <span class="hero-wordmark"><span class="wordmark-light">Tiny</span><span class="wordmark-strong">Serve</span></span>
+      </div>
      
-      <p class="tagline">A local host manager for running small Docker services on your Mac mini. Zero port forwarding, automatic Cloudflare Tunnel integration.</p>
-      <p class="subtitle">If you don't need infinite scale or 100% uptime, just predictable costs and full ownership.</p>
+      <p class="tagline">A local host manager for running small Docker services on your Mac mini. Optional Cloudflare Tunnel integration, and predictable costs with full ownership if you don't need infinite scale or 100% uptime.</p>
       <div class="install-box">
+        <div class="install-header">
+          <span class="code-dots" aria-hidden="true">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+          </span>
+          <span class="install-title">Install</span>
+          <button class="copy-btn" onclick="copyInstall()">Copy</button>
+        </div>
         <code><span class="dollar">$</span> brew tap tinyserve/tinyserve && brew install tinyserve</code>
-        <button class="copy-btn" onclick="copyInstall()">Copy</button>
       </div>
     </div>
   </section>
 
   <section class="getting-started">
     <div class="container">
+      <div class="keller-block">
+        <img src="keller.png" alt="Keller" class="keller-image">
+      </div>
       <h2>So you bought a new Mac?</h2>
       <p>Get your home server running in minutes.</p>
 
@@ -362,6 +573,14 @@
         </div>
         <p>Install Homebrew, Xcode Command Line Tools, and a Docker runtime.</p>
         <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
 <code><span class="comment"># Install Xcode Command Line Tools</span>
 <span class="command">xcode-select --install</span>
 
@@ -381,6 +600,14 @@
         </div>
         <p>Install tinyserve via Homebrew tap.</p>
         <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
 <code><span class="command">brew tap tinyserve/tinyserve</span>
 <span class="command">brew install tinyserve</span></code>
         </div>
@@ -393,6 +620,14 @@
         </div>
         <p>Run the init command with your domain and Cloudflare API token. This creates your tunnel automatically.</p>
         <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
 <code><span class="comment"># Start the daemon</span>
 <span class="command">TINYSERVE_API=http://127.0.0.1:7070 tinyserved &amp;</span>
 
@@ -411,6 +646,14 @@
         </div>
         <p>Add a service and deploy it. tinyserve handles the routing, SSL, and tunnel configuration.</p>
         <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
 <code><span class="comment"># Add a simple whoami service</span>
 <span class="command">tinyserve service add</span> <span class="flag">--name</span> <span class="string">whoami</span> <span class="flag">\</span>
   <span class="flag">--image</span> <span class="string">traefik/whoami:v1.10</span> <span class="flag">\</span>
@@ -432,6 +675,14 @@
         </div>
         <p>Configure the daemon to start automatically when your Mac boots.</p>
         <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
 <code><span class="comment"># Install the launchd agent</span>
 <span class="command">tinyserve launchd install</span>
 
@@ -492,6 +743,45 @@
       const btn = document.querySelector('.copy-btn');
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
+    }
+
+    const root = document.documentElement;
+    const themeToggle = document.querySelector('[data-theme-toggle]');
+    const themeLabel = document.querySelector('[data-theme-label]');
+
+    function setTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      if (themeToggle) {
+        const nextTheme = theme === 'light' ? 'dark' : 'light';
+        themeToggle.setAttribute('data-theme', theme);
+        themeToggle.setAttribute('aria-label', `Switch to ${nextTheme === 'light' ? 'white' : 'dark'} mode`);
+        if (themeLabel) {
+          themeLabel.textContent = nextTheme === 'light' ? 'White mode' : 'Dark mode';
+        }
+      }
+      try {
+        localStorage.setItem('theme', theme);
+      } catch (error) {
+        // Ignore storage failures (private mode, disabled storage).
+      }
+    }
+
+    const storedTheme = (() => {
+      try {
+        return localStorage.getItem('theme');
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    setTheme(storedTheme || (prefersLight ? 'light' : 'dark'));
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme') || 'dark';
+        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+      });
     }
   </script>
 </body>
