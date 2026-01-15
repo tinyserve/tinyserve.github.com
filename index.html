@@ -322,14 +322,14 @@
     .step-number {
       background: var(--accent);
       color: white;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       flex-shrink: 0;
     }
 
@@ -341,6 +341,42 @@
       color: var(--text-muted);
       margin-bottom: 16px;
       margin-left: 48px;
+    }
+
+    .step .note {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      margin-left: 48px;
+      font-size: 0.98rem;
+    }
+
+    .step ul {
+      color: var(--text-muted);
+      margin: 0 0 16px 64px;
+      padding-left: 18px;
+    }
+
+    .step li {
+      margin-bottom: 8px;
+    }
+
+    .step p code,
+    .step li code,
+    .step .note code,
+    .step .callout code {
+      font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+      font-size: 0.9em;
+      color: var(--green);
+    }
+
+    .step .callout {
+      margin-left: 48px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text-muted);
     }
 
     .code-block {
@@ -513,6 +549,12 @@
         margin-left: 0;
       }
 
+      .step .note,
+      .step ul,
+      .step .callout {
+        margin-left: 0;
+      }
+
       .hero-brand {
         flex-direction: column;
         gap: 10px;
@@ -557,7 +599,7 @@
           <span class="install-title">Install</span>
           <button class="copy-btn" onclick="copyInstall()">Copy</button>
         </div>
-        <code><span class="dollar">$</span> brew tap tinyserve/tinyserve && brew install tinyserve</code>
+        <code><span class="dollar">$</span> brew install tinyserve</code>
       </div>
     </div>
   </section>
@@ -567,15 +609,16 @@
       <div class="keller-block">
         <img src="keller.png" alt="Keller" class="keller-image">
       </div>
-      <h2>So you bought a new Mac?</h2>
-      <p>Get your home server running in minutes.</p>
+      <h2>Getting Started (Mac mini + first deploy)</h2>
+      <p>This is the ideal end-to-end flow: prepare a clean Mac mini, install Docker + tinyserve, then initialize Cloudflare Tunnel and deploy your first service.</p>
 
       <div class="step">
         <div class="step-header">
           <span class="step-number">1</span>
-          <h3>Install dependencies</h3>
+          <h3>Base system &amp; remote access (do this first)</h3>
         </div>
-        <p>Install Homebrew, Xcode Command Line Tools, and a Docker runtime.</p>
+        <p>Update macOS, install Xcode Command Line Tools (<code>xcode-select --install</code>), create a dedicated admin user, and enable Remote Login (SSH). Optionally enable Screen Sharing for rescue.</p>
+        <p class="note">Note your machine's IP address and hostname:</p>
         <div class="code-block">
           <div class="code-header">
             <span class="code-dots" aria-hidden="true">
@@ -585,24 +628,33 @@
             </span>
             <span class="code-title">Terminal</span>
           </div>
-<code><span class="comment"># Install Xcode Command Line Tools</span>
-<span class="command">xcode-select --install</span>
+<code><span class="comment"># Local hostname (usable as &lt;hostname&gt;.local on the same network)</span>
+<span class="command">scutil --get LocalHostName</span>
 
-<span class="comment"># Install Homebrew (if not already installed)</span>
-<span class="command">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
+<span class="comment"># IP address (Ethernet)</span>
+<span class="command">ipconfig getifaddr en0</span>
 
-<span class="comment"># Install Colima (lightweight Docker runtime for macOS)</span>
-<span class="command">brew install colima docker</span>
-<span class="command">colima start --arch aarch64 --vm-type vz --cpu 4 --memory 8</span></code>
+<span class="comment"># IP address (Wi-Fi, if applicable)</span>
+<span class="command">ipconfig getifaddr en1</span>
+
+<span class="comment"># List all network interfaces with IPs</span>
+<span class="command">ifconfig | grep "inet "</span></code>
         </div>
+        <p class="note">Network recommendations:</p>
+        <ul>
+          <li>Set a DHCP reservation or static IP on your router so the Mac mini stays stable.</li>
+          <li>Leave macOS Application Firewall on; tinyserve binds to <code>127.0.0.1</code> only.</li>
+          <li>Verify SSH works on your LAN: <code>ssh &lt;user&gt;@&lt;mac-mini-ip&gt;</code> or <code>ssh &lt;user&gt;@&lt;hostname&gt;.local</code>.</li>
+          <li>For off-site access, rely on Cloudflare Tunnel + Access rather than opening router ports.</li>
+        </ul>
       </div>
 
       <div class="step">
         <div class="step-header">
           <span class="step-number">2</span>
-          <h3>Install tinyserve</h3>
+          <h3>Prevent sleep (critical for headless servers)</h3>
         </div>
-        <p>Install tinyserve via Homebrew tap.</p>
+        <p>Mac mini will sleep when SSH sessions end, causing Cloudflare Tunnel and services to become unreachable. Disable sleep:</p>
         <div class="code-block">
           <div class="code-header">
             <span class="code-dots" aria-hidden="true">
@@ -612,17 +664,23 @@
             </span>
             <span class="code-title">Terminal</span>
           </div>
-<code><span class="command">brew tap tinyserve/tinyserve</span>
-<span class="command">brew install tinyserve</span></code>
+<code><span class="command">sudo pmset -a sleep 0</span>
+<span class="command">sudo pmset -a disksleep 0</span>
+<span class="command">sudo pmset -a displaysleep 0</span>
+<span class="command">sudo pmset -a powernap 0</span>
+
+<span class="comment"># Verify settings</span>
+<span class="command">pmset -g</span></code>
         </div>
+        <p class="note">Alternatively via System Settings: Energy - set "Turn display off after" to "Never" and disable automatic sleeping.</p>
       </div>
 
       <div class="step">
         <div class="step-header">
           <span class="step-number">3</span>
-          <h3>Initialize with your domain</h3>
+          <h3>Install Homebrew</h3>
         </div>
-        <p>Run the init command with your domain and Cloudflare API token. This creates your tunnel automatically.</p>
+        <p>Install Homebrew and add it to your PATH.</p>
         <div class="code-block">
           <div class="code-header">
             <span class="code-dots" aria-hidden="true">
@@ -632,23 +690,28 @@
             </span>
             <span class="code-title">Terminal</span>
           </div>
-<code><span class="comment"># Start the daemon</span>
-<span class="command">TINYSERVE_API=http://127.0.0.1:7070 tinyserved &amp;</span>
+<code><span class="comment"># Install Homebrew</span>
+<span class="command">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
 
-<span class="comment"># Initialize with your domain</span>
-<span class="command">tinyserve init \</span>
-<span class="flag">  --domain</span> <span class="string">yourdomain.com</span> <span class="flag">\</span>
-<span class="flag">  --cloudflare-api-token</span> <span class="string">$CF_API_TOKEN</span> <span class="flag">\</span>
-<span class="flag">  --tunnel-name</span> <span class="string">tinyserve-home</span></code>
+<span class="comment"># Apple Silicon: add to your shell profile</span>
+<span class="command">eval "$(/opt/homebrew/bin/brew shellenv)"</span>
+
+<span class="comment"># Verify</span>
+<span class="command">brew --version</span></code>
         </div>
       </div>
 
       <div class="step">
         <div class="step-header">
           <span class="step-number">4</span>
-          <h3>Add your first service</h3>
+          <h3>Install a Docker runtime (no Docker Desktop)</h3>
         </div>
-        <p>Add a service and deploy it. tinyserve handles the routing, SSL, and tunnel configuration.</p>
+        <p>Pick one:</p>
+        <ul>
+          <li><strong>Colima (recommended)</strong>: lightweight, fast, and simple.</li>
+          <li>Rancher Desktop with Docker API enabled (GUI option).</li>
+          <li>(Advanced) Lima with Docker socket/nerdctl.</li>
+        </ul>
         <div class="code-block">
           <div class="code-header">
             <span class="code-dots" aria-hidden="true">
@@ -658,26 +721,25 @@
             </span>
             <span class="code-title">Terminal</span>
           </div>
-<code><span class="comment"># Add a simple whoami service</span>
-<span class="command">tinyserve service add</span> <span class="flag">--name</span> <span class="string">whoami</span> <span class="flag">\</span>
-  <span class="flag">--image</span> <span class="string">traefik/whoami:v1.10</span> <span class="flag">\</span>
-  <span class="flag">--hostname</span> <span class="string">whoami.yourdomain.com</span> <span class="flag">\</span>
-  <span class="flag">--port</span> <span class="string">80</span>
+<code><span class="comment"># Colima (recommended)</span>
+<span class="command">brew install colima docker</span>
+<span class="command">colima start --arch aarch64 --vm-type vz --cpu 4 --memory 8</span>
 
-<span class="comment"># Deploy all services</span>
-<span class="command">tinyserve deploy</span>
-
-<span class="comment"># Check status</span>
-<span class="command">tinyserve status</span></code>
+<span class="comment"># Ensure Docker daemon is running</span>
+<span class="command">docker info</span>
+<span class="command">docker ps</span></code>
         </div>
+        <p class="note">Optional: auto-start Colima on login with <code>brew services start colima</code>.</p>
+        <p class="note">Troubleshooting: "Cannot connect to the Docker daemon" means the VM is not running; "docker: command not found" means the CLI is missing; "permission denied" means your user cannot access the socket.</p>
+        <p class="note">Run <code>tinyserve checklist</code> to verify Docker and other prerequisites.</p>
       </div>
 
       <div class="step">
         <div class="step-header">
           <span class="step-number">5</span>
-          <h3>Set up auto-start (optional)</h3>
+          <h3>Install tinyserve (Homebrew)</h3>
         </div>
-        <p>Configure the daemon to start automatically when your Mac boots.</p>
+        <p>Install tinyserve via Homebrew (core or tap) and verify the CLI.</p>
         <div class="code-block">
           <div class="code-header">
             <span class="code-dots" aria-hidden="true">
@@ -687,11 +749,187 @@
             </span>
             <span class="code-title">Terminal</span>
           </div>
-<code><span class="comment"># Install the launchd agent</span>
-<span class="command">tinyserve launchd install</span>
+<code><span class="comment"># If tinyserve is in Homebrew core</span>
+<span class="command">brew install tinyserve</span>
 
-<span class="comment"># Verify it's running</span>
+<span class="comment"># If using a tap</span>
+<span class="command">brew tap tinyserve/tinyserve</span>
+<span class="command">brew install tinyserve</span>
+
+<span class="comment"># Verify</span>
+<span class="command">tinyserve --help</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">6</span>
+          <h3>Tinyserve data root</h3>
+        </div>
+        <p>Create the data root (optional, tinyserve will create as needed).</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="command">mkdir -p "~/Library/Application Support/tinyserve"/{generated,backups,logs,services,traefik,cloudflared}</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">7</span>
+          <h3>Launch the daemon</h3>
+        </div>
+        <p>Run a foreground sanity check, then install the launchd agent.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="comment"># Foreground sanity check</span>
+<span class="command">TINYSERVE_API=http://127.0.0.1:7070 tinyserved</span>
+
+<span class="comment"># In another terminal</span>
+<span class="command">tinyserve status</span>
+
+<span class="comment"># Install as LaunchAgent</span>
+<span class="command">tinyserve launchd install</span>
 <span class="command">tinyserve launchd status</span></code>
+        </div>
+        <p class="note">Status should return JSON with <code>status: ok</code> during the sanity check.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">8</span>
+          <h3>Provide Cloudflare access (recommended)</h3>
+        </div>
+        <p>Prepare a Cloudflare API token with Tunnel + DNS permissions for your domain, then run the one-shot init.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="command">tinyserve init \</span>
+<span class="flag">  --domain</span> <span class="string">example.com</span> <span class="flag">\</span>
+<span class="flag">  --cloudflare-api-token</span> <span class="string">$CF_API_TOKEN</span> <span class="flag">\</span>
+<span class="flag">  --tunnel-name</span> <span class="string">tinyserve-home</span></code>
+        </div>
+        <p class="note">tinyserve will create a Cloudflare Tunnel (or reuse one), store credentials under <code>~/Library/Application Support/tinyserve/cloudflared/</code>, and wire the tunnel to Traefik.</p>
+        <p class="note">Optional: direct public exposure (no Cloudflare Tunnel) requires:</p>
+        <ul>
+          <li>DNS A/AAAA records pointed at your public IP.</li>
+          <li>Router port forwarding for 80/443.</li>
+          <li>Inbound 80/443 allowed on your firewall.</li>
+          <li>TLS termination via a reverse proxy (Traefik, Caddy, Nginx).</li>
+          <li>Dynamic DNS if your public IP changes.</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">9</span>
+          <h3>Add a service</h3>
+        </div>
+        <p>Add your first service. If <code>--hostname</code> is omitted, tinyserve uses the default domain.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="command">tinyserve service add \</span>
+<span class="flag">  --name</span> <span class="string">whoami</span> <span class="flag">\</span>
+<span class="flag">  --image</span> <span class="string">traefik/whoami:v1.10</span> <span class="flag">\</span>
+<span class="flag">  --port</span> <span class="string">80</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">10</span>
+          <h3>Deploy</h3>
+        </div>
+        <p>tinyserve stages configs, runs <code>docker compose up -d</code>, waits for health, and promotes on success.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="command">tinyserve deploy</span></code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">11</span>
+          <h3>Verify</h3>
+        </div>
+        <p>Check status and logs, then load the URL in your browser.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="command">tinyserve status</span>
+<span class="command">tinyserve logs --service whoami --tail 100</span></code>
+        </div>
+        <p class="note">Browser: <code>https://whoami.example.com</code> (optionally behind Cloudflare Access).</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">12</span>
+          <h3>Backups (recommended)</h3>
+        </div>
+        <p>Set up S3-compatible backups before running production workloads. See <code>docs/BACKUP_RESTORE.md</code> for scripts, schedules, and restore steps.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-number">13</span>
+          <h3>Keep it running</h3>
+        </div>
+        <p>Install/update the launchd agent and keep tinyserve current.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dots" aria-hidden="true">
+              <span class="code-dot red"></span>
+              <span class="code-dot yellow"></span>
+              <span class="code-dot green"></span>
+            </span>
+            <span class="code-title">Terminal</span>
+          </div>
+<code><span class="comment"># Install/update the launchd agent</span>
+<span class="command">tinyserve launchd install</span>
+<span class="command">tinyserve launchd status</span>
+
+<span class="comment"># Future updates</span>
+<span class="command">brew upgrade tinyserve &amp;&amp; tinyserve launchd uninstall &amp;&amp; tinyserve launchd install</span></code>
         </div>
       </div>
     </div>
@@ -702,28 +940,28 @@
       <h2>Quick Reference</h2>
       <div class="command-list">
         <div class="command-item">
+          <code>tinyserve checklist</code>
+          <span>Verify Docker and other prerequisites</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve init --domain example.com --cloudflare-api-token $CF_API_TOKEN --tunnel-name tinyserve-home</code>
+          <span>Initialize Cloudflare Tunnel and set the default domain</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve service add --name whoami --image traefik/whoami:v1.10 --port 80</code>
+          <span>Add a service using the default domain</span>
+        </div>
+        <div class="command-item">
+          <code>tinyserve deploy</code>
+          <span>Deploy services with health checks and promotion</span>
+        </div>
+        <div class="command-item">
           <code>tinyserve status</code>
           <span>Show daemon health, proxy status, and service count</span>
         </div>
         <div class="command-item">
-          <code>tinyserve service list</code>
-          <span>List all services with their status and metadata</span>
-        </div>
-        <div class="command-item">
-          <code>tinyserve service add --name NAME --image IMG --hostname HOST --port PORT</code>
-          <span>Add a new service with Docker image and hostname</span>
-        </div>
-        <div class="command-item">
-          <code>tinyserve deploy</code>
-          <span>Deploy all services with health checks and auto-rollback</span>
-        </div>
-        <div class="command-item">
-          <code>tinyserve logs --service NAME --tail 100</code>
+          <code>tinyserve logs --service whoami --tail 100</code>
           <span>View logs for a specific service</span>
-        </div>
-        <div class="command-item">
-          <code>tinyserve rollback</code>
-          <span>Restore last known-good configuration</span>
         </div>
       </div>
     </div>
@@ -743,7 +981,7 @@
 
   <script>
     function copyInstall() {
-      navigator.clipboard.writeText('brew tap tinyserve/tinyserve && brew install tinyserve');
+      navigator.clipboard.writeText('brew install tinyserve');
       const btn = document.querySelector('.copy-btn');
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
