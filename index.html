@@ -874,9 +874,9 @@
       if (themeToggle) {
         const nextTheme = theme === 'light' ? 'dark' : 'light';
         themeToggle.setAttribute('data-theme', theme);
-        themeToggle.setAttribute('aria-label', `Switch to ${nextTheme === 'light' ? 'white' : 'dark'} mode`);
+        themeToggle.setAttribute('aria-label', `Switch to ${nextTheme === 'light' ? 'light' : 'dark'} mode`);
         if (themeLabel) {
-          themeLabel.textContent = nextTheme === 'light' ? 'White mode' : 'Dark mode';
+          themeLabel.textContent = nextTheme === 'light' ? 'Light mode' : 'Dark mode';
         }
       }
       try {
